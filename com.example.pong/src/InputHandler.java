@@ -2,45 +2,39 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class InputHandler extends KeyAdapter {
-    private boolean wPressed, sPressed, upPressed, downPressed, spacePressed, pPressed, rPressed, xPressed;
-    private boolean onePressed, twoPressed;
+    private boolean wPressed, sPressed, upPressed, downPressed, spacePressed, pPressed, rPressed, xPressed, mPressed;
+    private boolean onePressed, twoPressed, sixPressed, sevenPressed;
 
     private boolean plusPressed, minusPressed;
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_W, KeyEvent.VK_Q -> wPressed = true;
-            case KeyEvent.VK_S, KeyEvent.VK_A -> sPressed = true;
-            case KeyEvent.VK_UP -> upPressed = true;
-            case KeyEvent.VK_DOWN -> downPressed = true;
-            case KeyEvent.VK_SPACE -> spacePressed = true;
-            case KeyEvent.VK_P -> pPressed = true;
-            case KeyEvent.VK_R -> rPressed = true; // Reset
-            case KeyEvent.VK_X -> xPressed = true;
-            case KeyEvent.VK_1 -> onePressed = true;
-            case KeyEvent.VK_2 -> twoPressed = true;
-            case KeyEvent.VK_PLUS -> plusPressed = true;
-            case KeyEvent.VK_MINUS -> minusPressed = true;
+    private void setKeyState(int keyCode, boolean pressed) {
+        switch (keyCode) {
+            case KeyEvent.VK_W, KeyEvent.VK_Q -> wPressed = pressed;
+            case KeyEvent.VK_S, KeyEvent.VK_A -> sPressed = pressed;
+            case KeyEvent.VK_UP -> upPressed = pressed;
+            case KeyEvent.VK_DOWN -> downPressed = pressed;
+            case KeyEvent.VK_SPACE -> spacePressed = pressed;
+            case KeyEvent.VK_P -> pPressed = pressed;
+            case KeyEvent.VK_R -> rPressed = pressed;
+            case KeyEvent.VK_X -> xPressed = pressed;
+            case KeyEvent.VK_M -> mPressed = pressed;
+            case KeyEvent.VK_1 -> onePressed = pressed;
+            case KeyEvent.VK_2 -> twoPressed = pressed;
+            case KeyEvent.VK_6, KeyEvent.VK_NUMPAD6 -> sixPressed = pressed;
+            case KeyEvent.VK_7, KeyEvent.VK_NUMPAD7 -> sevenPressed = pressed;
+            case KeyEvent.VK_PLUS, KeyEvent.VK_ADD, KeyEvent.VK_EQUALS -> plusPressed = pressed;
+            case KeyEvent.VK_MINUS, KeyEvent.VK_SUBTRACT -> minusPressed = pressed;
         }
     }
 
     @Override
+    public void keyPressed(KeyEvent e) {
+        setKeyState(e.getKeyCode(), true);
+    }
+
+    @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_W, KeyEvent.VK_Q -> wPressed = false;
-            case KeyEvent.VK_S, KeyEvent.VK_A -> sPressed = false;
-            case KeyEvent.VK_UP -> upPressed = false;
-            case KeyEvent.VK_DOWN -> downPressed = false;
-            case KeyEvent.VK_SPACE -> spacePressed = false;
-            case KeyEvent.VK_P -> pPressed = false;
-            case KeyEvent.VK_R -> rPressed = false; // Reset
-            case KeyEvent.VK_X -> xPressed = false;
-            case KeyEvent.VK_1 -> onePressed = false;
-            case KeyEvent.VK_2 -> twoPressed = false;
-            case KeyEvent.VK_PLUS -> plusPressed = false;
-            case KeyEvent.VK_MINUS -> minusPressed = false;
-        }
+        setKeyState(e.getKeyCode(), false);
     }
 
     public boolean isWPressed() {
@@ -75,12 +69,24 @@ public class InputHandler extends KeyAdapter {
         return xPressed;
     }
 
+    public boolean isMPressed() {
+        return mPressed;
+    }
+
     public boolean isOnePressed() {
         return onePressed;
     }
 
     public boolean isTwoPressed() {
         return twoPressed;
+    }
+
+    public boolean isSixPressed() {
+        return sixPressed;
+    }
+
+    public boolean isSevenPressed() {
+        return sevenPressed;
     }
 
     public boolean isPlusPressed() {

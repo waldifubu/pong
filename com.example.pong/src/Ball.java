@@ -1,18 +1,33 @@
 import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Ball {
 
+    private static final double DEFAULT_SPEED = 400;
+    private static final double MIN_SPEED = 50;
+    private static final double MAX_SPEED = 1000;
+    private static final double SPEED_BOOST_FACTOR = 1.05;
+    private static final double MAX_BOUNCE_ANGLE = Math.toRadians(60);
+    private static final double MIN_HORIZONTAL_RATIO = 0.15;
+    private static final double SPIN_FACTOR = 0.35;
+    private static final double MIN_RESET_ANGLE = -30;
+    private static final double MAX_RESET_ANGLE = 30;
+
     private double x, y;
     private final int size;
+    private final int playfieldWidth;
+    private final int playfieldHeight;
 
     // Velocity (px/s)
     private double vx;
     private double vy;
 
-    public Ball(int startX, int startY, int size) {
+    public Ball(int startX, int startY, int size, int playfieldWidth, int playfieldHeight) {
         this.x = startX;
         this.y = startY;
         this.size = size;
+        this.playfieldWidth = playfieldWidth;
+        this.playfieldHeight = playfieldHeight;
         reset(startX, startY);
     }
 
@@ -23,6 +38,10 @@ public class Ball {
         x += vx * dt;
         y += vy * dt;
 
+        Rectangle ballBounds = getBounds();
+        Rectangle leftPaddleBounds = leftPaddle.getBounds();
+        Rectangle rightPaddleBounds = rightPaddle.getBounds();
+
         // Wall collision (top/bottom)
         if (y <= 0) {
             y = 0;
@@ -30,23 +49,23 @@ public class Ball {
             if (GamePanel.wallSound != null) GamePanel.wallSound.play();
         }
 
-        if (y >= GamePanel.HEIGHT - size) {
-            y = GamePanel.HEIGHT - size;
+        if (y >= playfieldHeight - size) {
+            y = playfieldHeight - size;
             invertY();
             if (GamePanel.wallSound != null) GamePanel.wallSound.play();
         }
 
         // Left paddle collision
-        if (getBounds().intersects(leftPaddle.getBounds())) {
-            x = leftPaddle.getBounds().getMaxX(); // rausdrücken
-            reflect(leftPaddle);
+        if (ballBounds.intersects(leftPaddleBounds)) {
+            x = leftPaddleBounds.getMaxX();
+            reflect(leftPaddle, leftPaddleBounds);
             if (GamePanel.paddleSound != null) GamePanel.paddleSound.play();
         }
 
         // Right paddle collision
-        if (getBounds().intersects(rightPaddle.getBounds())) {
-            x = rightPaddle.getBounds().getX() - size; // rausdrücken
-            reflect(rightPaddle);
+        if (ballBounds.intersects(rightPaddleBounds)) {
+            x = rightPaddleBounds.getX() - size;
+            reflect(rightPaddle, rightPaddleBounds);
             if (GamePanel.paddleSound != null) GamePanel.paddleSound.play();
         }
     }
@@ -54,9 +73,7 @@ public class Ball {
     // =========================
     // REFLECTION + SPIN
     // =========================
-    private void reflect(Paddle paddle) {
-
-        Rectangle paddleRect = paddle.getBounds();
+    private void reflect(Paddle paddle, Rectangle paddleRect) {
 
         double paddleCenterY = paddleRect.getY() + paddleRect.getHeight() / 2.0;
         double ballCenterY = y + size / 2.0;
@@ -72,10 +89,9 @@ public class Ball {
         // =========================
         // BOUNCE ANGLE
         // =========================
-        double maxBounceAngle = Math.toRadians(60);
-        double bounceAngle = relativeIntersectY * maxBounceAngle;
+        double bounceAngle = relativeIntersectY * MAX_BOUNCE_ANGLE;
 
-        double speed = Math.sqrt(vx * vx + vy * vy);
+        double speed = Math.hypot(vx, vy);
 
         // =========================
         // BASE DIRECTION
@@ -86,13 +102,12 @@ public class Ball {
         // =========================
         // SPIN (REDUCED & CONTROLLED)
         // =========================
-        double spinFactor = 0.35; // less is cleaner
-        newVy += paddle.getVelocityY() * spinFactor;
+        newVy += paddle.getVelocityY() * SPIN_FACTOR;
 
         // =========================
         // HORIZONTAL DIRECTION
         // =========================
-        if (paddleRect.getX() > GamePanel.WIDTH / 2.0) {
+        if (paddleRect.getX() > playfieldWidth / 2.0) {
             newVx = -Math.abs(newVx);
         } else {
             newVx = Math.abs(newVx);
@@ -101,8 +116,7 @@ public class Ball {
         // =========================
         // MIN HORIZONTAL SPEED (ANTI VERTICAL LOCK)
         // =========================
-        double minHorizontalRatio = 0.15; // 15% of total speed
-        double minVx = speed * minHorizontalRatio;
+        double minVx = speed * MIN_HORIZONTAL_RATIO;
 
         if (Math.abs(newVx) < minVx) {
             newVx = Math.signum(newVx) * minVx;
@@ -111,13 +125,13 @@ public class Ball {
         // =========================
         // NORMALIZE SPEED
         // =========================
-        double length = Math.sqrt(newVx * newVx + newVy * newVy);
+        double length = Math.hypot(newVx, newVy);
 
-        // leichte Beschleunigung
-        double newSpeed = speed * 1.05;
+        // Moderate speed boost on each hit
+        double newSpeed = speed * SPEED_BOOST_FACTOR;
 
         // clamp
-        newSpeed = Math.max(400, Math.min(newSpeed, 1000));
+        newSpeed = Math.max(DEFAULT_SPEED, Math.min(newSpeed, MAX_SPEED));
 
         vx = (newVx / length) * newSpeed;
         vy = (newVy / length) * newSpeed;
@@ -130,12 +144,12 @@ public class Ball {
         x = startX;
         y = startY;
 
-        double speed = 400;
+        double speed = DEFAULT_SPEED;
 
         // Angle (-30° to +30°)
-        double angle = Math.toRadians((Math.random() * 60) - 30);
+        double angle = Math.toRadians(ThreadLocalRandom.current().nextDouble(MIN_RESET_ANGLE, MAX_RESET_ANGLE));
 
-        boolean goRight = Math.random() < 0.5;
+        boolean goRight = ThreadLocalRandom.current().nextBoolean();
 
         vx = speed * Math.cos(angle);
         vy = speed * Math.sin(angle);
@@ -147,14 +161,11 @@ public class Ball {
     // SPEED CONTROL (+ / -)
     // =========================
     public void changeSpeed(double delta) {
-        double speed = Math.sqrt(vx * vx + vy * vy);
+        double speed = Math.hypot(vx, vy);
 
         speed += delta;
 
-        double minSpeed = 50;
-        double maxSpeed = 1000;
-
-        speed = Math.max(minSpeed, Math.min(maxSpeed, speed));
+        speed = Math.max(MIN_SPEED, Math.min(MAX_SPEED, speed));
 
         double angle = Math.atan2(vy, vx);
 

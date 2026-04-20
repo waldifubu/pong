@@ -2,26 +2,31 @@ package screen;
 
 import java.awt.*;
 
-public class PauseScreen {
+public class PauseScreen implements Screen {
 
-    private int width, height;
+    private static final Font TITLE_FONT = new Font("Monospaced", Font.BOLD, 50);
+    private static final Font MESSAGE_FONT = new Font("Monospaced", Font.PLAIN, 20);
+
+    private final int width;
+    private final int height;
 
     public PauseScreen(int width, int height) {
         this.width = width;
         this.height = height;
     }
 
+    @Override
     public void update(double dt) {
-        // keine Animation nötig (optional später)
+        // No update logic needed for pause screen
     }
 
+    @Override
     public void draw(Graphics g) {
 
         Graphics2D g2 = (Graphics2D) g;
 
         // light dark overlay
-        g2.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, 0.6f));
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, width, height);
 
@@ -30,11 +35,11 @@ public class PauseScreen {
                 AlphaComposite.SRC_OVER, 1f));
 
         g2.setColor(Color.GRAY);
-        g2.setFont(new Font("Monospaced", Font.BOLD, 50));
+        g2.setFont(TITLE_FONT);
 
         drawCentered(g2, "PAUSED", height / 2);
 
-        g2.setFont(new Font("Monospaced", Font.PLAIN, 20));
+        g2.setFont(MESSAGE_FONT);
         drawCentered(g2, "Press P to continue", height / 2 + 40);
     }
 

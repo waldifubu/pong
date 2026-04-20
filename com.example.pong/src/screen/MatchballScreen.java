@@ -50,7 +50,7 @@ public class MatchballScreen implements Screen {
         alpha = Math.max(0f, Math.min(1f, alpha));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         g2.setColor(Color.YELLOW);
-        g2.setFont(new Font("Arial", Font.BOLD, 50));
+        g2.setFont(new Font("Arial", Font.BOLD, 58));
         drawCentered(g2, "MATCHBALL!!!", height / 2);
         g2.dispose();
     }

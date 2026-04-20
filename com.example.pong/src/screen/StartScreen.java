@@ -80,11 +80,13 @@ public class StartScreen implements Screen {
                 "UP / DOWN         Right Player",
                 "+ / -             Ball Speed",
                 "P                 Pause",
+                "       M         Mute / Unmute Music",
+                "       6 / 7     Music quieter / louder",
                 "    R             Restart Game",
                 "X                 Exit",
                 "",
                 "(c) 2026 by Waldemar Dell",
-                "with support of ChatGPT"
+                "with support from ChatGPT"
         };
 
         y += 40;
@@ -94,7 +96,7 @@ public class StartScreen implements Screen {
             y += 27;
         }
 
-        // Blinkender Hinweis
+        // Blinked notice
         if (animationDone) {
             long time = System.currentTimeMillis();
             if ((time / 500) % 2 == 0) {

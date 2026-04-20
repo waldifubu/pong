@@ -1,10 +1,12 @@
 import java.awt.*;
 
 public class Paddle {
+    private static final double DEFAULT_SPEED = 400;
+
     private double x, y;
     private final int width;
     private final int height;
-    private double speed = 400; // pixels per second
+    private final double speed = DEFAULT_SPEED; // pixels per second
     private double velocityY;
 
     public Paddle(int x, int y, int width, int height) {
@@ -17,13 +19,14 @@ public class Paddle {
     public void update(boolean upPressed, boolean downPressed, int panelHeight, double dt) {
         velocityY = 0;
 
-        if (upPressed) {
-            y -= speed * dt;
-            velocityY = -speed;
-        }
-        if (downPressed) {
-            y += speed * dt;
-            velocityY = speed;
+        if (upPressed != downPressed) {
+            if (upPressed) {
+                y -= speed * dt;
+                velocityY = -speed;
+            } else {
+                y += speed * dt;
+                velocityY = speed;
+            }
         }
 
         if (y < 0) y = 0;
