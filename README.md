@@ -1,2 +1,2 @@
 # pong
-Retro pong game written in Java code, supoorted by AI
+Retro pong game written in Java code, engineered by AI
