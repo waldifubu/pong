@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+set -eu
+
+echo
+echo "========================="
+echo "BUILD START"
+echo "========================="
+
+rm -rf out
+mkdir -p out
+
+echo "* Compiling Java source files..."
+javac -cp "lib/jl1.0.1.jar:." -d out \
+  src/main/java/com/example/pong/*.java \
+  src/main/java/com/example/pong/screen/*.java
+
+echo "* Copying resources..."
+cp -R src/main/resources/. out/
+
+echo "* Building JAR..."
+jar cfm pong.jar manifest.txt -C out .
+
+echo
+echo "========================="
+echo "BUILD SUCCESS"
+echo "========================="
+echo
+echo "Starting with:"
+echo "java -jar pong.jar"
+echo

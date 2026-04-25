@@ -1,0 +1,2 @@
+Main-Class: com.example.pong.Main
+Class-Path: lib/jl1.0.1.jar

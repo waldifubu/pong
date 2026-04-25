@@ -47,6 +47,41 @@ Whether you want a quick match against the computer or a competitive two-player 
 - **Swing / AWT** for rendering and desktop UI
 - **Custom game loop** for smooth frame-based gameplay
 
+## Build and Run
+
+Make sure a **JDK** is installed and that `javac`, `jar`, and `java` are available on your `PATH`.
+
+The project includes ready-to-use compile scripts for both Windows and Linux. Both scripts:
+
+- compile the Java source files
+- copy all resources into the build output
+- create the runnable `pong.jar`
+
+### Windows
+
+Use the batch script in the project root:
+
+```bat
+compile.bat
+```
+
+### Linux
+
+Make the script executable once, then run it:
+
+```bash
+chmod +x compile
+./compile
+```
+
+### Start the game
+
+After a successful build, start the game with:
+
+```bash
+java -jar pong.jar
+```
+
 ## Library
 
 This project uses **JLayer** to play MP3 background music.
