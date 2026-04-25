@@ -1,6 +1,10 @@
 # Pong
 
-**Pong** is a polished retro arcade experience built in Java and designed to feel fast, responsive, and fun from the very first rally. It combines classic Pong gameplay with modern quality-of-life features, animated screens, configurable settings, sound effects, background music, and a surprisingly lively presentation.
+![Pong Menu](menu.png)
+![Pong Screenshot](gameplay.png)
+
+**Pong**
+is a polished retro arcade experience built in Java and designed to feel fast, responsive, and fun from the very first rally. It combines classic Pong gameplay with modern quality-of-life features, animated screens, configurable settings, sound effects, background music, and a surprisingly lively presentation.
 
 Whether you want a quick match against the computer or a competitive two-player duel, this project delivers a clean old-school style with a richer gameplay layer.
 
